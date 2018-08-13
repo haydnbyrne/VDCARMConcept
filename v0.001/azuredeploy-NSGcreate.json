@@ -31,5 +31,10 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+      "NSG-Internal": {
+        "type": "string",
+        "value": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('NSGName'))]"
+      }
+    }
 }

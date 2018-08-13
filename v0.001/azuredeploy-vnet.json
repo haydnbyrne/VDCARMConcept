@@ -106,6 +106,12 @@
       "metadata": {
         "description": "Location for all resources."
       }
+    },
+    "NSG-Internal": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource ID for Internal NSG"
+      }
     }
   },
   "variables": {
@@ -130,7 +136,10 @@
           {
             "name": "[parameters('vnet1subnet1Name')]",
             "properties": {
-              "addressPrefix": "[parameters('vnet1subnet1Prefix')]"
+              "addressPrefix": "[parameters('vnet1subnet1Prefix')]",
+              "networkSecurityGroup": {
+                "id": "[parameters('NSG-Internal')]"
+              }
             }
           },
           {

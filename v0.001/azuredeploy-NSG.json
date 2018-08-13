@@ -38,9 +38,9 @@
             "properties": {
               "securityRules": [
                 {
-                  "name": "SSH",
+                  "name": "[variables('NSGName')]",
                   "properties": {
-                    "description": "Allows SSH traffic",
+                    "description": "Internal Network NSG",
                     "protocol": "Tcp",
                     "sourcePortRange": "*",
                     "destinationPortRange": "22",
