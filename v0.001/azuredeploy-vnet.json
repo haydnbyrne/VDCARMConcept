@@ -107,7 +107,7 @@
         "description": "Location for all resources."
       }
     },
-    "NSG-Internal": {
+    "NSGInternal": {
       "type": "string",
       "metadata": {
         "description": "Resource ID for Internal NSG"
