@@ -138,7 +138,7 @@
             "properties": {
               "addressPrefix": "[parameters('vnet1subnet1Prefix')]",
               "networkSecurityGroup": {
-                "id": "[parameters('NSG-Internal')]"
+                "id": "[parameters('NSGInternal')]"
               }
             }
           },
