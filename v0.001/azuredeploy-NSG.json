@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworkResourceGroupName": {
+            "type": "string",
+            "metadata": {
+              "description": "The resource group where the existing VNet is located."
+            }
+          },
+          "virtualNetworkName": {
+            "type": "string",
+            "metadata": {
+              "description": "The name of the existing VNet"
+            }
+          },
+          "subnetName": {
+            "type": "string",
+            "defaultValue": "default",
+            "metadata": {
+              "description": "The name of the existing subnet."
+            }
+          },
+          "subnetAddressPrefix": {
+            "type": "string",
+            "value": "[reference(resourceId(parameters('virtualNetworkResourceGroupName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworkName'), parameters('subnetName')), '2018-03-01').addressPrefix]"
+          }
+    },
+    "variables": {
+        "NSGName": "NSG-Internal"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('NSGName')]",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2018-03-01",
+            "properties": {
+              "securityRules": [
+                {
+                  "name": "SSH",
+                  "properties": {
+                    "description": "Allows SSH traffic",
+                    "protocol": "Tcp",
+                    "sourcePortRange": "*",
+                    "destinationPortRange": "22",
+                    "sourceAddressPrefix": "*",
+                    "destinationAddressPrefix": "*",
+                    "access": "Allow",
+                    "priority": 100,
+                    "direction": "Inbound"
+                  }
+                }
+              ]
+            }
+        },
+        {
+            "apiVersion": "2018-03-01",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName'))]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "description": "assignNSG",
+                "addressPrefix": "[parameters('subnetAddressPrefix')]",
+                "networkSecurityGroup": {
+                "id": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('NSGname'))]"
+              }
+            }
+        }
+    ],
+    "outputs": {}
+}
