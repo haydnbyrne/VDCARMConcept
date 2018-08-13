@@ -32,7 +32,7 @@
         }
     ],
     "outputs": {
-      "NSG-Internal": {
+      "NSGInternal": {
         "type": "string",
         "value": "[resourceId('Microsoft.Network/networkSecurityGroups',variables('NSGName'))]"
       }

@@ -27,7 +27,7 @@
               "contentVersion":"1.0.0.0"
             },
             "parameters": {
-              "NSG-Internal":{"value": "[reference('create-nsgs').outputs.NSGName.value]"}
+              "NSGInternal":{"value": "[reference('create-nsgs').outputs.NSGInternal.value]"}
             }
         }
     }
