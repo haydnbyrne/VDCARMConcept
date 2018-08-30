@@ -8,10 +8,13 @@
       "vnetAddressPrefix": {
         "value": "10.0.0.0/16"
       },
+      "location": {
+        "value": "Souteast Asia"
+      },
       "subnetinfo": {
           "value": [
               {
-                "name": "Subnet1",
+                "name": "GatewaySubnet",
                 "prefix": "10.0.1.0/24"
               },
               {

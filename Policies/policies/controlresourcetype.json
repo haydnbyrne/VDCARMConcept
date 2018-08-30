@@ -1,0 +1,10 @@
+{
+   
+    "if": {
+    "field": "type",
+    "in": "[parameters('listOfResourceTypes')]"
+    },
+    "then": {
+    "effect": "[parameters('policyEffect')]"
+    }
+}
