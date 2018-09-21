@@ -3,29 +3,51 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
       "vnetName": {
-        "value": "VNet1"
+        "value": "Locationx-VNet1"
       },
       "vnetAddressPrefix": {
         "value": "10.0.0.0/16"
       },
       "location": {
-        "value": "Souteast Asia"
+        "value": "Southeast Asia"
       },
       "subnetinfo": {
-          "value": [
+        "value": [
+            {
+              "name": "GatewaySubnet",
+              "prefix": "10.0.1.0/24",
+              "routetable": ""
+            },
+            {
+              "name": "Management",
+              "prefix": "10.0.2.0/24",
+              "routetable": "ForcedTunnel"
+            },
+            {
+              "name": "SharedServices",
+              "prefix": "10.0.3.0/24",
+              "routetable": "ForcedTunnel"
+            }
+        ]
+      },
+      "udrinfo": {
+        "value": [
+            {
+              "name": "ForcedTunnel",
+              "properties": 
               {
-                "name": "GatewaySubnet",
-                "prefix": "10.0.1.0/24"
-              },
-              {
-                "name": "Subnet2",
-                "prefix": "10.0.2.0/24"
-              },
-              {
-                "name": "Subnet3",
-                "prefix": "10.0.3.0/24"
+                "routes": [
+                  {
+                      "name": "RoutetoGateway",
+                      "properties" : {
+                        "addressprefix": "0.0.0.0/0",
+                        "nextHopType": "VirtualNetworkGateway"
+                      }
+                  }
+                ]
               }
-          ]
-      }
+            }
+        ]
+    }
     }
   }

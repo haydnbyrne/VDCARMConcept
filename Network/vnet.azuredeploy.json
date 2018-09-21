@@ -25,6 +25,9 @@
       },
       "subnetinfo": {
           "type": "array"
+      },
+      "udrinfo": {
+          "type": "array"
       }
     },
     "variables": {},
@@ -43,6 +46,26 @@
             }
         },
         {
+            "condition": "[not(empty(parameters('subnetinfo')[copyIndex('subnetcount')].routetable))]",
+            "apiVersion": "2015-06-15",
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "name": "[concat(parameters('vnetName'),'/',parameters('subnetinfo')[copyIndex('subnetcount')].name,'Subnet')]",
+            "properties": {
+                "addressPrefix": "[parameters('subnetinfo')[copyIndex('subnetcount')].prefix]",
+                "routetable": {
+                    "id": "[resourceId('Microsoft.Network/routeTables', parameters('subnetinfo')[copyIndex('subnetcount')].routetable)]"
+                }
+            },
+            "copy": {
+                "name": "subnetcount",
+                "count": "[length(parameters('subnetinfo'))]"    
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', parameters('vnetName'))]"
+            ]
+        },
+        {
+            "condition": "[empty(parameters('subnetinfo')[copyIndex('subnetcount')].routetable)]",
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Network/virtualNetworks/subnets",
             "name": "[concat(parameters('vnetName'),'/',parameters('subnetinfo')[copyIndex('subnetcount')].name)]",
@@ -56,6 +79,21 @@
             "dependsOn": [
                 "[concat('Microsoft.Network/virtualNetworks/', parameters('vnetName'))]"
             ]
+        },
+        {
+          "apiVersion": "2015-06-15",
+          "type": "Microsoft.Network/routeTables",
+          "name": "[parameters('udrinfo')[copyIndex('udrcount')].name]",
+          "location": "[resourceGroup().location]",
+          "tags": {
+            "displayName": "[concat('Route Table - ',parameters('udrinfo')[copyIndex('udrcount')].name)]"
+          },
+          "properties": "[parameters('udrinfo')[copyIndex('udrcount')].properties]",
+          "copy": {
+              "name": "udrcount",
+              "count": "[length(parameters('udrinfo'))]"    
+          }
         }
+
     ]
   }

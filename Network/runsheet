@@ -3,3 +3,12 @@ Create vnet Location B
 Create gateway subnet location A
 Create gateway subnet location B
 Create NSGs x ?
+update DNS servers
+ADD RESOURCE LOCKS
+Add Tags
+
+"parameters('udrinfo')[copyIndex('udrcount')].routes[copyIndex('routecount')].nextHopType"
+
+
+routeTable": {
+                    "id": "[resourceId('Microsoft.Network/routeTables', parameters('subnetinfo')[copyIndex('subnetcount')].routetable)]"

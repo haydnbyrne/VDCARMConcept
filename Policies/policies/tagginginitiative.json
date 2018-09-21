@@ -1,0 +1,104 @@
+[
+	{
+		"policyDefinitionId": "<createtagpolicy>",
+		"parameters": {
+			"tagName": {
+				"value": "costID"
+			},
+			"tagValue": {
+				"value": "Infrastructure Production Subscription"
+			}
+		}
+    },
+    {
+		"policyDefinitionId": "<createtagpolicy>",
+		"parameters": {
+			"tagName": {
+				"value": "ResourceID"
+			},
+			"tagValue": {
+				"value": "update"
+			}
+		}
+    },
+    {
+		"policyDefinitionId": "<createtagpolicy>",
+		"parameters": {
+			"tagName": {
+				"value": "NextReview"
+			},
+			"tagValue": {
+				"value": "update"
+			}
+		}
+    },
+    {
+		"policyDefinitionId": "<createtagpolicy>",
+		"parameters": {
+			"tagName": {
+				"value": "Environment"
+			},
+			"tagValue": {
+				"value": "update"
+			}
+		}
+    },
+    {
+		"policyDefinitionId": "<createtagpolicy>",
+		"parameters": {
+			"tagName": {
+				"value": "SecClass"
+			},
+			"tagValue": {
+				"value": "update"
+			}
+		}
+    },
+    {
+		"policyDefinitionId": "<createtagpolicy>",
+		"parameters": {
+			"tagName": {
+				"value": "Owner"
+			},
+			"tagValue": {
+				"value": "update"
+			}
+		}
+	},
+	{
+		"policyDefinitionId": "<auditdenytagvaluepolicy>",
+		"parameters": {
+			"tagName": {
+				"value": "ResourceID"
+			},
+			"allowedValues": {
+                "value": [
+                    "ABCD",
+                    "EFGH",
+                    "IJKL",
+                    "MNOP"
+                ]
+            },
+            "policyEffect": {
+				"value": "audit"
+			}
+		}
+	},
+	{
+		"policyDefinitionId": "<auditdenytagvaluepolicy>",
+		"parameters": {
+			"tagName": {
+				"value": "SecClass"
+			},
+			"allowedValues": {
+                "value": [
+                    "UNCLASSIFIED-DLM",
+                    "NOCLASSIFICATION"
+                ]
+            },
+            "policyEffect": {
+				"value": "audit"
+			}
+		}
+	}
+]
