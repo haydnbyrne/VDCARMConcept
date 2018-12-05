@@ -1,8 +1,14 @@
+#Sign in to Azure before running script
 Import-Module -Name AzureRM.Resources
 $TenantID = (get-azurermcontext).tenant.id
-$pathtoscript = "C:\Repos\VDCARM\VDCARMConcept\Policies\"
+$pathtoscript = "C:\Repos\VDCARM\VDCARMConcept\Policies\" #Change to $PSScriptRoot
 
 $OrgAcronym = "IAG"
+#Check Azure sign in
+$AzureContext = Get-AzureRmContext
+Write-Output "Currently Connected to subscription [$($AzureContext.Subscription.Name)], and AAD Tenant[$($azurecontext.tenant.Directory)]"
+Pause
+
 <#---Prerequisites
 Do this: https://docs.microsoft.com/en-us/azure/role-based-access-control/elevate-access-global-admin
 Then, go to Azure Portal > Management Groups, cliuck "Start using Management Groups" - this creates the root management group
@@ -134,15 +140,15 @@ $PolicyScope = $mgmtGroup_Production_Internal.id
 $PolicyParameters = @{'listOfResourceTypesAllowed'=($ResourceTypesCORE + $ResourceTypesPROTECTED)}
 New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Baseline - Allow PROTECTED Resource Types" -Name "BL-PrdPROTECTED" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters
 
-$PolicyScope = $mgmtGroup_Production_External
+$PolicyScope = $mgmtGroup_Production_External.id
 $PolicyParameters = @{'listOfResourceTypesAllowed'=($ResourceTypesCORE + $ResourceTypesUDLM + $ResourceTypesPROTECTED)}
 New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Baseline - Allow UDLM Resource Types" -Name "BL-PrdUDLM" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters
 
-$PolicyScope = $mgmtGroup_Development_Internal
+$PolicyScope = $mgmtGroup_Development_Internal.id
 $PolicyParameters = @{'listOfResourceTypesAllowed'=($ResourceTypesCORE + $ResourceTypesPROTECTED)}
 New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Baseline - Allow PROTECTED Resource Types" -Name "BL-PrdPROTECTED" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters
 
-$PolicyScope = $mgmtGroup_Development_External
+$PolicyScope = $mgmtGroup_Development_External.id
 $PolicyParameters = @{'listOfResourceTypesAllowed'=($ResourceTypesCORE + $ResourceTypesUDLM + $ResourceTypesPROTECTED)}
 New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Baseline - Allow UDLM Resource Types" -Name "BL-PrdUDLM" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters
 
@@ -150,30 +156,24 @@ New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Baseline - Allow UDLM Reso
 #$PolicyParameters = @{'listOfResourceTypesAllowed'=($ResourceTypesCUSTOMERENABLE + $ResourceTypesCORE + $ResourceTypesUDLM + $ResourceTypesPROTECTED)}
 #New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Baseline - Allow CUSTOMER ENABLED Resource Types" -Name "BL-TypeCUSTOMER" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters
 
-
-
-
-
 #Allowed virtual machine SKUs
 #prevent using old services VMs
 
 (Get-AzureRmPolicyAssignment -Scope "/providers/Microsoft.Management/managementGroups/6508fbc2-ba0b-4c49-9e52-65af01d4ad17").properties.DisplayName
 
-########INTERNAL
-$PolicyScope = "/providers/Microsoft.Management/managementGroups/MgmtGroup1"
+######## Prod INTERNAL
+$PolicyScope = $mgmtGroup_Production_Internal.id
 #Prevent Public IPs
 $PolicyParameters = @{'listOfResourceTypesNotAllowed'=@("Microsoft.Network/publicIPAddresses")}
 $PolicyDefinition = $AllPolicyDefinitions | Where-Object {$_.Properties.DisplayName -eq "Not Allowed Resource Types"}
-New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Internal - Prevent Public IP Assignment" -Name "INT-DenyPublicIP" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters
+New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Internal - Prevent Public IP Assignment" -Name "INT-PRDDenyPubIP" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters
 
 
 
 ########EXTERNAL
-#Audit External IPs - will not enable - if audit conditions are met it counts as a non-compliance
-<#
-$PolicyParameters = @{'listOfResourceTypes'=@("Microsoft.Network/publicIPAddresses");'policyEffect'="audit"}
-$PolicyDefinition = $AllPolicyDefinitions | Where-Object {$_.Properties.DisplayName -eq "Control Resource Types"}
-New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym External - Audit Public IP Assignment" -Name "INT-AuditPublicIP" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters
-#>
+
 
 #Apply a baseline "Block all Internet NSG" to all subnets?
+
+#Enable Security Center
+Get-AzureRmPolicyDefinition
