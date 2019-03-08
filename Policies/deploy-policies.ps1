@@ -58,6 +58,7 @@ New-AzureRmRoleAssignment -Scope $mgmtgroup.id -ObjectId $group.objectid -RoleDe
 New-AzureRmPolicyDefinition -Description "Audit or Deny tag values" -Mode Indexed -Name "ControlTagValue" -ManagementGroupName $TenantID -Policy "$($pathtoscript)Policies\auditdenytagvalue.json" -Parameter "$($pathtoscript)Policies\auditdenytagvalue.parameters.json" -DisplayName "Audit or Deny Tag Value"
 New-AzureRmPolicyDefinition -Description "Deny creation of VMs with  non-Managed disks" -Mode All -Name "DenyNonManagedDisks" -ManagementGroupName $TenantID -Policy "$($pathtoscript)Policies\denynonmanageddisks.json" -DisplayName "Deny Creation of VMs with non-Managed Disks"
 New-AzureRmPolicyDefinition -Description "Deny creation of VMs without Hybrid Use Benefit Enabled" -Mode All -Name "DenyNonHUB" -ManagementGroupName $TenantID -Policy "$($pathtoscript)Policies\enforceHybridUseBenefit.json" -DisplayName "Deny creation of VMs without Hybrid Use Benefit Enabled"
+New-AzureRmPolicyDefinition -Description "Deploy Microsoft Monitoring Agent extension to all Windows VMs" -Mode All -Name "DeployWinVMMMAExt" -ManagementGroupName $TenantID -Policy "$($pathtoscript)Policies\deploy-oms-vm-extension-windows-vm.json" -Parameter "$($pathtoscript)Policies\deploy-oms-vm-extension-windows-vm.parameters.json" -DisplayName "Deploy Microsoft Monitoring Agent extension to all Windows VMs"
 
 #--------------------Assign policies
 $AllPolicyDefinitions = Get-AzureRmPolicyDefinition
@@ -111,6 +112,10 @@ $taggingInitiative = $taggingInitiative | ConvertTo-Json -Depth 20
 $taggingdefinition = New-AzureRmPolicySetDefinition -Name "BL-TagInitiative" -Description "Baseline Tagging initiative" -PolicyDefinition $taggingInitiative -ManagementGroupName $TenantID
 New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Baseline - Tagging Initiative" -Name "BL-Tagging" -Scope $PolicyScope -PolicySetDefinition $taggingDefinition
 
+#Install required extensions on all VMs. These include IaaS Anti Malware, and the Microsoft Monitoring Agent.
+$PolicyDefinition = $AllPolicyDefinitions | Where-Object {$_.Properties.DisplayName -eq "Deploy Microsoft Monitoring Agent extension to all Windows VMs"}
+$PolicyParameters = @{'logAnalytics'="LA-HUB";'proxyUri'="124.47.159.20:8080"}
+New-AzureRmPolicyAssignment -DisplayName "$OrgAcronym Baseline - Require Microsoft Monitoring Agent extension for all Window VMs" -Name "BL-VMMMAext" -Scope $PolicyScope -PolicyDefinition $PolicyDefinition -PolicyParameterObject $PolicyParameters -AssignIdentity -Location "Australia East"
 
 #Not allowed resource types, Allowed resource types
 #https://servicetrust.microsoft.com/ViewPage/Australia

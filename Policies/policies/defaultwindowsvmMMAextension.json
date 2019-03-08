@@ -1,0 +1,101 @@
+{
+      "if": {
+        "allOf": [
+          {
+            "field": "type",
+            "equals": "Microsoft.Compute/virtualMachines"
+          },
+          {
+            "field": "Microsoft.Compute/imagePublisher",
+            "equals": "MicrosoftWindowsServer"
+          },
+          {
+            "field": "Microsoft.Compute/imageOffer",
+            "equals": "WindowsServer"
+          },
+          {
+            "field": "Microsoft.Compute/imageSKU",
+            "in": [
+              "2008-R2-SP1",
+              "2008-R2-SP1-smalldisk",
+              "2012-Datacenter",
+              "2012-Datacenter-smalldisk",
+              "2012-R2-Datacenter",
+              "2012-R2-Datacenter-smalldisk",
+              "2016-Datacenter",
+              "2016-Datacenter-Server-Core",
+              "2016-Datacenter-Server-Core-smalldisk",
+              "2016-Datacenter-smalldisk",
+              "2016-Datacenter-with-Containers",
+              "2016-Datacenter-with-RDSH"
+            ]
+          }
+        ]
+      },
+      "then": {
+        "effect": "deployIfNotExists",
+        "details": {
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "existenceCondition": {
+                "allOf": [
+                {
+                    "field": "Microsoft.Compute/virtualMachines/extensions/type",
+                    "equals": "MicrosoftMonitoringAgent"
+                },
+                {
+                    "field": "Microsoft.Compute/virtualMachines/extensions/publisher",
+                    "equals": "Microsoft.EnterpriseCloud.Monitoring"
+                }
+                ]
+          },
+          "roleDefinitionIds": [
+            "/providers/microsoft.authorization/roleDefinitions/9980e02c-c2be-4d73-94e8-173b1dc7cf3c"
+          ],
+          "deployment": {
+            "properties": {
+              "mode": "incremental",
+              "template": {
+                "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {
+                  "vmName": {
+                    "type": "string"
+                  }
+                },
+                "variables": {
+                  "apiVersion": "2015-06-15",
+                  "myWorkSpaceId": "a3962852-6d26-41f2-80d1-6394c893e583",
+                  "myWorkSpaceKey": "39uk1seC2kik4HSvRIAUyIqFKzN5kULkBr8SMCxvqfye9Ga6DeFemDEhUrRVSy0TX3N6FHmuWLECJ5iFOta1tQ=="
+                },
+                "resources": [
+                  {
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat(parameters('vmName'),'/MicrosoftManagementAgent')]",
+                    "apiVersion": "[variables('apiVersion')]",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "[variables('myWorkSpaceId')]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[variables('myWorkspaceKey')]"
+                        }
+                    }
+                  }
+                ]
+              },
+              "parameters": {
+                "vmName": {
+                  "value": "[field('name')]"
+                }
+              }
+            }
+          }
+        }
+      }
+
+}
